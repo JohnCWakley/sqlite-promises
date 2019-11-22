@@ -17,6 +17,23 @@ export class Database {
 
     constructor() { }
 
+    private _safeParams(params: any, keepFunction: boolean = false) {
+        let functionFound = false;
+
+        return (typeof params !== undefined && params.length > 0) ? params.map((param: any) => {
+            if (
+                (!keepFunction && typeof param !== 'function') ||
+                (keepFunction && !functionFound && typeof param === 'function')
+            ) {
+                if (typeof param === 'function') {
+                    functionFound = true;
+                }
+
+                return param;
+            }
+        }) : undefined;
+    }
+
     isOpen() {
         return (this._isOpen);
     }
@@ -57,40 +74,37 @@ export class Database {
                         }
                     });
                 } else {
-                    log.warn(`Database.close: Database is not currently open`);
-                    resolve();
+                    reject(new Error(`Database.close: Database is not currently open`));
                 }
             } else {
-                log.warn(`Database.close: Database was never opened`);
-                resolve();
+                reject(new Error(`Database.close: Database was never opened`));
             }
         });
     }
 
     // Database#configure(option, value)
     configure(option: "busyTimeout", value: number) {
-        log.debug(`Database.configure("${option}", ${value})`);
+        return new Promise((resolve, reject) => {
+            log.debug(`Database.configure("${option}", ${value})`);
 
-        if (this._db && this._isOpen) {
-            this._db.configure(option, value);
-        } else {
-            log.warn(`Database.configure: Database is not open`);
-        }
+            if (this._db && this._isOpen) {
+                this._db.configure(option, value);
+                resolve();
+            } else {
+                reject(new Error(`Database.configure: Database is not open`));
+            }
+        })
     }
 
-    // Database#run(sql, [param, ...], [callback])
+    // Database#run(query, [param, ...], [callback])
     run(query: string, ...params: any) {
         log.debug(`Database.run("${query}", ${params})`);
 
-        const safeParams = (typeof params !== undefined && params.length > 0) ? params.map((param: any) => {
-            if (typeof param !== 'function') {
-                return param;
-            }
-        }) : undefined;
+        params = this._safeParams(params);
 
         return new Promise((resolve, reject) => {
             if (this._db != null && this._isOpen) {
-                this._db.run(query, safeParams,
+                this._db.run(query, params,
                     function (this: any, err: Error | null) {
                         if (err) {
                             reject(err);
@@ -104,28 +118,79 @@ export class Database {
         });
     }
 
-    // Database#get(sql, [param, ...], [callback])
-    get(sql: string, ...params: any) {
+    // Database#get(query, [param, ...], [callback])
+    get(query: string, ...params: any) {
+        log.debug(`Database.get("${query}", ${params})`);
+
+        params = this._safeParams(params);
+
+        return new Promise((resolve, reject) => {
+            if (this._db != null && this._isOpen) {
+                this._db.get(query, params, (err: Error | null, row: any) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(row);
+                    }
+                });
+            } else {
+                reject(new Error(`Database.get: Database is not open`));
+            }
+        });
+    }
+
+    // Database#all(query, [param, ...], [callback])
+    all(query: string, ...params: any) {
+        log.debug(`Database.all("${query}", ${params})`);
+
+        params = this._safeParams(params);
+
+        return new Promise((resolve, reject) => {
+            if (this._db != null && this._isOpen) {
+                this._db.all(query, params, (err: Error | null, rows: any[]) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                });
+            } else {
+                reject(new Error(`Database.get: Database is not open`));
+            }
+        });
+    }
+
+    // Database#each(query, [param, ...], [callback], [complete])
+    each(query: string, ...params: any) {
+        log.debug(`Database.each("${query}", ${params})`);
+
+        params = this._safeParams(params, true);
+
+        const rowFunction = params.find((param: any) => (typeof param === 'function')) ? params.pop() : undefined;
+
+        return new Promise((resolve, reject) => {
+            if (this._db != null && this._isOpen) {
+                this._db.each(query, params, rowFunction, 
+                    (err: Error | null, row: any) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(row);
+                    }
+                });
+            } else {
+                reject(new Error(`Database.get: Database is not open`));
+            }
+        });
+    }
+
+    // Database#exec(query, [callback])
+    exec(query: string, ...params: any) {
 
     }
 
-    // Database#all(sql, [param, ...], [callback])
-    all(sql: string, ...params: any) {
-
-    }
-
-    // Database#each(sql, [param, ...], [callback], [complete])
-    each(sql: string, ...params: any) {
-
-    }
-
-    // Database#exec(sql, [callback])
-    exec(sql: string, ...params: any) {
-
-    }
-
-    // Database#prepare(sql, [param, ...], [callback])
-    prepare(sql: string, ...params: any) {
+    // Database#prepare(query, [param, ...], [callback])
+    prepare(query: string, ...params: any) {
 
     }
 }

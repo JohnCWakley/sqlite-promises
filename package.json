@@ -4,7 +4,7 @@
   "description": "A promise wrapper around the great sqlite3 package.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "ts-node test/test.ts",
+    "test": "tsc && mocha",
     "dev": "cross-env NODE_ENV=development nodemon",
     "build": "tsc"
   },
@@ -23,6 +23,7 @@
     "@types/node": "^12.12.11",
     "@types/sqlite3": "^3.1.5",
     "cross-env": "^6.0.3",
+    "mocha": "^6.2.2",
     "nodemon": "^2.0.1",
     "ts-node": "^8.5.2",
     "typescript": "^3.7.2"
