@@ -1,5 +1,5 @@
 import { inspect } from 'util';
-import { gray, white, yellow, red } from 'chalk';
+import { gray, green, white, yellow, red } from 'chalk';
 
 const DEBUG = ((process.env.NODE_ENV || 'production').toLowerCase() !== 'production');
 
@@ -20,6 +20,7 @@ export default function Logger(scope?: string, debug: boolean = false) {
         debug: (...args: any) => {
             if (DEBUG || debug) { _log(gray, args); }
         },
+        hero: (...args: any) => _log(green, args),
         info: (...args: any) => _log(white, args),
         warn: (...args: any) => _log(yellow, args),
         error: (...args: any) => _log(red, args)
