@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A promise wrapper around the great sqlite3 package.",
   "main": "dist/index.js",
+  "types" : "dist/index.d.ts",
   "scripts": {
     "test": "tsc && mocha",
     "dev": "cross-env NODE_ENV=development nodemon",
