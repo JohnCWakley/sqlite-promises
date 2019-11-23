@@ -1,6 +1,6 @@
 import { name, version } from './package.json';
-
 import sqlite3, {
+    Statement,
     OPEN_READONLY,
     OPEN_READWRITE,
     OPEN_CREATE,
@@ -8,11 +8,8 @@ import sqlite3, {
     OPEN_PRIVATECACHE,
     OPEN_URI
 } from 'sqlite3';
-
 import { Database } from './src/database';
-import { Statement } from './src/statement';
-
-import Logger from './src/logger';
+import { Logger } from './src/logger';
 
 export {
     sqlite3,

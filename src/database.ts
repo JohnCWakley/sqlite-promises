@@ -6,8 +6,7 @@ import sqlite3, {
     OPEN_PRIVATECACHE,
     OPEN_URI
 } from 'sqlite3';
-
-import Logger from './logger';
+import { Logger } from './logger';
 
 const log = Logger('Database');
 

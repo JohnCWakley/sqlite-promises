@@ -8,7 +8,7 @@ if (DEBUG) {
     console.log(chalk.gray((new Date()).toISOString(), 'Logger : DEBUG:', DEBUG));
 }
 
-export default function Logger(scope?: string, debug: boolean = false) {
+export function Logger(scope?: string, debug: boolean = false) {
     function _log(color: Function, args: any[]) {
         args = args.map(arg => {
             return (typeof arg === 'string') ? arg : inspect(arg);

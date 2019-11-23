@@ -2,7 +2,6 @@ const assert = require('assert')
 const { Database, Statement, Logger } = require('../dist/index.js')
 const { existsSync, unlinkSync } = require('fs')
 
-const log = Logger('test', true)
 const TABLE = 'test_table'
 const DATABASE = 'test.sqlite'
 
