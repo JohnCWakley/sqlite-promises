@@ -6,7 +6,10 @@
   "scripts": {
     "test": "tsc && mocha",
     "dev": "cross-env NODE_ENV=development nodemon",
-    "build": "tsc"
+    "build": "tsc",
+    "prepare" : "npm run build",
+    "version" : "git add -A src",
+    "postversion" : "git push && git push --tags"
   },
   "keywords": [
     "sqlite",
