@@ -15,6 +15,15 @@
   ],
   "author": "John Wakley <jwakley74@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohnCWakley/sqlite-promises.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JohnCWakley/sqlite-promises/issues"
+  },
+  "homepage": "https://github.com/JohnCWakley/sqlite-promises#readme",
+  "files": [ "dist/**/*" ],
   "dependencies": {
     "chalk": "^3.0.0",
     "sqlite3": "^4.1.0"

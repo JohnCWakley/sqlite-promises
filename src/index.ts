@@ -1,4 +1,3 @@
-import { name, version } from './package.json';
 import sqlite3, {
     Statement,
     OPEN_READONLY,
@@ -8,8 +7,8 @@ import sqlite3, {
     OPEN_PRIVATECACHE,
     OPEN_URI
 } from 'sqlite3';
-import { Database } from './src/database';
-import { Logger } from './src/logger';
+import { Database } from './database';
+import { Logger } from './logger';
 
 export {
     sqlite3,
@@ -23,5 +22,3 @@ export {
     OPEN_PRIVATECACHE,
     OPEN_URI
 };
-
-Logger(name).info(`version: ${version}`);
