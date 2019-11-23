@@ -1,7 +1,12 @@
 import { inspect } from 'util';
 import { gray, green, white, yellow, red } from 'chalk';
+import chalk = require('chalk');
 
 const DEBUG = ((process.env.NODE_ENV || 'production').toLowerCase() !== 'production');
+
+if (DEBUG) {
+    console.log(chalk.gray((new Date()).toISOString(), 'Logger : DEBUG:', DEBUG));
+}
 
 export default function Logger(scope?: string, debug: boolean = false) {
     function _log(color: Function, args: any[]) {

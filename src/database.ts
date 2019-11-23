@@ -19,19 +19,31 @@ export class Database {
 
     private _safeParams(params: any, keepFunction: boolean = false) {
         let functionFound = false;
+        let safeParams = [];
+        let callback = undefined;
+        
+        if (params.length > 0) {
+            log.debug('_safeParams: params:', params);
 
-        return (typeof params !== undefined && params.length > 0) ? params.map((param: any) => {
-            if (
-                (!keepFunction && typeof param !== 'function') ||
-                (keepFunction && !functionFound && typeof param === 'function')
-            ) {
-                if (typeof param === 'function') {
-                    functionFound = true;
+            if (params.length == 1) {
+                if (params[0] instanceof Function && !functionFound && keepFunction) {
+                    callback = params[0];
+                } else {
+                    safeParams = params[0];
                 }
-
-                return param;
+            } else {
+                params.each((param: any) => {
+                    if (param instanceof Function && !functionFound && keepFunction) {
+                        callback = param;
+                        functionFound = true;
+                    } else {
+                        safeParams.push(param);
+                    }
+                })
             }
-        }) : undefined;
+        }
+        
+        return { params: safeParams, callback: callback };
     }
 
     isOpen() {
@@ -102,9 +114,11 @@ export class Database {
 
         params = this._safeParams(params);
 
+        log.debug('Database.run: params:', params);
+
         return new Promise((resolve, reject) => {
             if (this._db != null && this._isOpen) {
-                this._db.run(query, params,
+                this._db.run(query, params.params,
                     function (this: any, err: Error | null) {
                         if (err) {
                             reject(err);
@@ -126,7 +140,7 @@ export class Database {
 
         return new Promise((resolve, reject) => {
             if (this._db != null && this._isOpen) {
-                this._db.get(query, params, (err: Error | null, row: any) => {
+                this._db.get(query, params.params, (err: Error | null, row: any) => {
                     if (err) {
                         reject(err);
                     } else {
@@ -147,7 +161,7 @@ export class Database {
 
         return new Promise((resolve, reject) => {
             if (this._db != null && this._isOpen) {
-                this._db.all(query, params, (err: Error | null, rows: any[]) => {
+                this._db.all(query, params.params, (err: Error | null, rows: any[]) => {
                     if (err) {
                         reject(err);
                     } else {
@@ -166,11 +180,9 @@ export class Database {
 
         params = this._safeParams(params, true);
 
-        const rowFunction = params.find((param: any) => (typeof param === 'function')) ? params.pop() : undefined;
-
         return new Promise((resolve, reject) => {
             if (this._db != null && this._isOpen) {
-                this._db.each(query, params, rowFunction, 
+                this._db.each(query, params.params, params.callback, 
                     (err: Error | null, row: any) => {
                     if (err) {
                         reject(err);
@@ -185,12 +197,42 @@ export class Database {
     }
 
     // Database#exec(query, [callback])
-    exec(query: string, ...params: any) {
+    exec(query: string) {
+        log.debug(`Database.exec("${query}")`);
 
+        return new Promise((resolve, reject) => {
+            if (this._db != null && this._isOpen) {
+                this._db.exec(query, (err: Error | null) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(this);
+                    }
+                });
+            } else {
+                reject(new Error(`Database.exec: Database is not open`));
+            }
+        });
     }
 
     // Database#prepare(query, [param, ...], [callback])
     prepare(query: string, ...params: any) {
+        log.debug(`Database.prepare("${query}", ${params})`);
 
+        params = this._safeParams(params);
+
+        return new Promise((resolve, reject) => {
+            if (this._db != null && this._isOpen) {
+                let statement = this._db.prepare(query, params.params, (err: Error | null) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(statement);
+                    }
+                });
+            } else {
+                reject(new Error(`Database.prepare: Database is not open`));
+            }
+        });
     }
 }
