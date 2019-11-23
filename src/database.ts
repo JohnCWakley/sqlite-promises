@@ -22,8 +22,6 @@ export class Database {
         let callback = undefined;
         
         if (params.length > 0) {
-            log.debug('_safeParams: params:', params);
-
             if (params.length == 1) {
                 if (params[0] instanceof Function && !functionFound && keepFunction) {
                     callback = params[0];
@@ -112,8 +110,6 @@ export class Database {
         log.debug(`Database.run("${query}", ${params})`);
 
         params = this._safeParams(params);
-
-        log.debug('Database.run: params:', params);
 
         return new Promise((resolve, reject) => {
             if (this._db != null && this._isOpen) {
