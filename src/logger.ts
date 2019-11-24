@@ -2,12 +2,6 @@ import { inspect } from 'util';
 import { gray, green, white, yellow, red } from 'chalk';
 import chalk = require('chalk');
 
-const DEBUG = ((process.env.NODE_ENV || 'production').toLowerCase() !== 'production');
-
-if (DEBUG) {
-    console.log(chalk.gray((new Date()).toISOString(), 'Logger : DEBUG:', DEBUG));
-}
-
 export function Logger(scope?: string, debug: boolean = false) {
     function _log(color: Function, args: any[]) {
         args = args.map(arg => {
@@ -21,10 +15,12 @@ export function Logger(scope?: string, debug: boolean = false) {
         console.log(color(args.join(' ')));
     }
 
+    if (debug) {
+        console.log(chalk.gray((new Date()).toISOString(), 'Logger : showing debug logs'));
+    }
+
     return {
-        debug: (...args: any) => {
-            if (DEBUG || debug) { _log(gray, args); }
-        },
+        debug: (...args: any) => { if (debug) _log(gray, args); },
         hero: (...args: any) => _log(green, args),
         info: (...args: any) => _log(white, args),
         warn: (...args: any) => _log(yellow, args),
