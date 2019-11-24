@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { Database, Statement, Logger } = require('../dist/index.js')
+const { Database } = require('../dist/index.js')
 const { existsSync, unlinkSync } = require('fs')
 
 const TABLE = 'test_table'
