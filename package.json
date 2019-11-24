@@ -1,6 +1,6 @@
 {
   "name": "sqlite-promises",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A promise wrapper around the great sqlite3 package.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,12 +31,12 @@
     "dist/**/*"
   ],
   "dependencies": {
+    "@types/node": "^12.12.12",
+    "@types/sqlite3": "^3.1.5",
     "chalk": "^3.0.0",
     "sqlite3": "^4.1.0"
   },
   "devDependencies": {
-    "@types/node": "^12.12.11",
-    "@types/sqlite3": "^3.1.5",
     "mocha": "^6.2.2",
     "nodemon": "^2.0.1",
     "ts-node": "^8.5.2",
