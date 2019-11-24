@@ -44,7 +44,7 @@ describe('#Database', function () {
 
     describe('#All', function () {
         it('should query multiple rows', async function () {
-            let result = (await db.all(`SELECT * FROM ${TABLE} WHERE name != 'rob'`)).map(it => { return it.name })
+            let result = (await db.all(`SELECT * FROM ${TABLE} WHERE name != $name`, { $name: 'rob' })).map(it => { return it.name })
             assert.deepEqual(['test', 'john'], result)
         })
     })
